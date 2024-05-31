@@ -76,3 +76,23 @@ func (controller *UserController) VerifyEmail(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Email verified", result))
 }
+
+func (controller *UserController) Login(c echo.Context) error {
+	user := new(web.UserLoginRequest)
+
+	if err := c.Bind(user); err != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	if err := c.Validate(user); err != nil {
+		return err
+	}
+
+	result, err := controller.service.Login(user.Email, user.Password)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helper.ResponseToClient(http.StatusInternalServerError, err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Login success", result))
+}
