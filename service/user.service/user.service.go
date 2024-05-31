@@ -8,6 +8,6 @@ import (
 type UserServiceInterface interface {
 	Create(user *web.UserRequest) (helper.CustomResponse, error)
 	CreateSeller(user *web.UserRequest) (helper.CustomResponse, error)
-	//FindByEmail(email, password string) (helper.CustomResponse, error)
+	Login(email, password string) (helper.CustomResponse, error)
 	VerifyEmail(token string) (helper.CustomResponse, error)
 }

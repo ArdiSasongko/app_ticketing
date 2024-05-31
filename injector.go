@@ -7,6 +7,7 @@ import (
 	"github.com/ArdiSasongko/app_ticketing/app"
 	usercontroller "github.com/ArdiSasongko/app_ticketing/controller/user.controller"
 	"github.com/ArdiSasongko/app_ticketing/db/conn"
+	"github.com/ArdiSasongko/app_ticketing/helper"
 	userrepository "github.com/ArdiSasongko/app_ticketing/repository/user.repository"
 	verificationrepository "github.com/ArdiSasongko/app_ticketing/repository/verification.repository"
 	userservice "github.com/ArdiSasongko/app_ticketing/service/user.service"
@@ -19,6 +20,8 @@ var userSet = wire.NewSet(
 	wire.Bind(new(userrepository.UserRepositoryInterface), new(*userrepository.UserRepo)),
 	verificationrepository.NewEmailVerification,
 	wire.Bind(new(verificationrepository.VerificationEmailInterface), new(*verificationrepository.EmailVerification)),
+	helper.NewTokenUseCase,
+	wire.Bind(new(helper.TokenUseCaseInterface), new(*helper.TokenUseCaseImpl)),
 	userservice.NewUserService,
 	wire.Bind(new(userservice.UserServiceInterface), new(*userservice.UserService)),
 	usercontroller.NewUserController,

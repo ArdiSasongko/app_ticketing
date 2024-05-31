@@ -11,4 +11,5 @@ func UserRoute(e *echo.Echo, controller usercontroller.UserControllerInterface) 
 	apiv1.POST("/user", controller.Create)
 	apiv1.POST("/user/seller", controller.CreateSeller)
 	apiv1.POST("/user/verify-email", controller.VerifyEmail)
+	apiv1.POST("/user/login", controller.Login)
 }

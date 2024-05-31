@@ -1,6 +1,10 @@
 package helper
 
+import "github.com/golang-jwt/jwt/v5"
+
 type CustomResponse map[string]interface{}
+
+var BlockedToken map[string]jwt.NumericDate
 
 type ResponseClientModel struct {
 	Code    int         `json:"code"`

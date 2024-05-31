@@ -9,18 +9,21 @@ import (
 	"github.com/ArdiSasongko/app_ticketing/helper"
 	userrepository "github.com/ArdiSasongko/app_ticketing/repository/user.repository"
 	verificationrepository "github.com/ArdiSasongko/app_ticketing/repository/verification.repository"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
 	repo       userrepository.UserRepositoryInterface
 	verifyRepo verificationrepository.VerificationEmailInterface
+	Token      helper.TokenUseCaseInterface
 }
 
-func NewUserService(repo userrepository.UserRepositoryInterface, verifyRepo verificationrepository.VerificationEmailInterface) *UserService {
+func NewUserService(repo userrepository.UserRepositoryInterface, verifyRepo verificationrepository.VerificationEmailInterface, token helper.TokenUseCaseInterface) *UserService {
 	return &UserService{
 		repo:       repo,
 		verifyRepo: verifyRepo,
+		Token:      token,
 	}
 }
 
@@ -148,4 +151,44 @@ func (service *UserService) VerifyEmail(token string) (helper.CustomResponse, er
 	}
 
 	return helper.CustomResponse{"email": "verified"}, nil
+}
+
+func (service *UserService) Login(email, password string) (helper.CustomResponse, error) {
+	user, errUser := service.repo.FindByEmail(email)
+
+	if errUser != nil {
+		return nil, errUser
+	}
+
+	errPass := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+
+	if errPass != nil {
+		return nil, errors.New("invalid password")
+	}
+
+	expiredTime := time.Now().Local().Add(15 * time.Minute)
+
+	claims := helper.CustomClaims{
+		UserID: user.UserID,
+		Name:   user.Name,
+		Email:  user.Email,
+		Role:   user.Role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expiredTime),
+			Issuer:    "app-ticketig",
+		},
+	}
+
+	token, errToken := service.Token.GeneratedToken(claims)
+
+	if errToken != nil {
+		return nil, errToken
+	}
+
+	data := helper.CustomResponse{
+		"token":      token,
+		"expired_at": expiredTime,
+	}
+
+	return data, nil
 }
