@@ -2,6 +2,7 @@ package userservice
 
 import (
 	"errors"
+	"os"
 	"time"
 
 	"github.com/ArdiSasongko/app_ticketing/db/model/domain"
@@ -191,4 +192,22 @@ func (service *UserService) Login(email, password string) (helper.CustomResponse
 	}
 
 	return data, nil
+}
+
+func (service *UserService) Logout(token string) (helper.CustomResponse, error) {
+	claims := &helper.CustomClaims{}
+
+	_, err := jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("SECRET_KEY")), nil
+	})
+
+	if err != nil {
+		return nil, errors.New("invalid token")
+	}
+
+	if errToken := service.Token.InvalidToken(token); errToken != nil {
+		return nil, errToken
+	}
+
+	return nil, nil
 }

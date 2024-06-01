@@ -6,6 +6,7 @@ import (
 	"github.com/ArdiSasongko/app_ticketing/db/model/web"
 	"github.com/ArdiSasongko/app_ticketing/helper"
 	userservice "github.com/ArdiSasongko/app_ticketing/service/user.service"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -95,4 +96,19 @@ func (controller *UserController) Login(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Login success", result))
+}
+
+func (controller *UserController) Logout(c echo.Context) error {
+	token := c.Get("user").(*jwt.Token)
+	if token == nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, "Token not found", nil))
+	}
+	userToken := token.Raw
+	result, err := controller.service.Logout(userToken)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helper.ResponseToClient(http.StatusInternalServerError, err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Logout success", result))
 }

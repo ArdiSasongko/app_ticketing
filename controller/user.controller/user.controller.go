@@ -7,4 +7,5 @@ type UserControllerInterface interface {
 	CreateSeller(c echo.Context) error
 	VerifyEmail(c echo.Context) error
 	Login(c echo.Context) error
+	Logout(c echo.Context) error
 }
