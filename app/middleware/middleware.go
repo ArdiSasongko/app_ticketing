@@ -21,3 +21,20 @@ func JWTProtect() echo.MiddlewareFunc {
 		},
 	})
 }
+
+func AccessRole(role ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			user := c.Get("user").(*jwt.Token)
+			claims, _ := user.Claims.(*helper.CustomClaims)
+			userRole := claims.Role
+			// checking role
+			for _, r := range role {
+				if userRole == r {
+					return next(c)
+				}
+			}
+			return c.JSON(http.StatusUnauthorized, helper.ResponseToClient(http.StatusUnauthorized, "unauthorized", nil))
+		}
+	}
+}
