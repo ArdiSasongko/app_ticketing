@@ -9,4 +9,6 @@ import (
 type EventServiceInterface interface {
 	Create(sellerID int, event web.EventRequest) (helper.CustomResponse, error)
 	FetchAll() ([]entityevent.EventEntity, error)
+	FetchEvent(eventId int) (entityevent.EventDetailEntity, error)
+	UpdateEvent(eventID int, eventUpdate web.EventUpdateRequest) (helper.CustomResponse, error)
 }

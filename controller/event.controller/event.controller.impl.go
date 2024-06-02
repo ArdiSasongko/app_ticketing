@@ -2,6 +2,7 @@ package eventcontroller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/ArdiSasongko/app_ticketing/db/model/web"
 	"github.com/ArdiSasongko/app_ticketing/helper"
@@ -49,4 +50,46 @@ func (con *EventController) FetchAll(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success fetch all event", result))
+}
+
+func (con *EventController) FetchEvent(c echo.Context) error {
+	eventID, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	result, errFetch := con.service.FetchEvent(eventID)
+
+	if errFetch != nil {
+		return c.JSON(http.StatusNotFound, helper.ResponseToClient(http.StatusNotFound, errFetch.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success fetch event", result))
+}
+
+func (con *EventController) UpdateEvent(c echo.Context) error {
+	eventID, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	eventUpdate := new(web.EventUpdateRequest)
+
+	if err := c.Bind(eventUpdate); err != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	if err := c.Validate(eventUpdate); err != nil {
+		return err
+	}
+
+	result, errUpdate := con.service.UpdateEvent(eventID, *eventUpdate)
+
+	if errUpdate != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, errUpdate.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success update event", result))
 }

@@ -20,7 +20,12 @@ func (cV *CustomValidator) Validate(i interface{}) error {
 	return cV.validator.Struct(i)
 }
 
-func Server(userController usercontroller.UserControllerInterface, eventController eventcontroller.EventControllerInterface) *echo.Echo {
+// making alias
+type userCon usercontroller.UserControllerInterface
+type eventCon eventcontroller.EventControllerInterface
+
+// server func declaration
+func Server(userController userCon, eventController eventCon) *echo.Echo {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}

@@ -3,8 +3,10 @@ package middleware
 import (
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/ArdiSasongko/app_ticketing/helper"
+	eventrepository "github.com/ArdiSasongko/app_ticketing/repository/event.repository"
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -35,6 +37,28 @@ func AccessRole(role ...string) echo.MiddlewareFunc {
 				}
 			}
 			return c.JSON(http.StatusUnauthorized, helper.ResponseToClient(http.StatusUnauthorized, "unauthorized", nil))
+		}
+	}
+}
+
+func AccessID(r eventrepository.EventRepo) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			id, _ := strconv.Atoi(c.Param("id"))
+			event, err := r.FetchEvent(id)
+
+			if err != nil {
+				return c.JSON(http.StatusNotFound, helper.ResponseToClient(http.StatusNotFound, err.Error(), nil))
+			}
+
+			user := c.Get("user").(*jwt.Token)
+			claims, _ := user.Claims.(*helper.CustomClaims)
+
+			if claims.UserID != event.SellerID {
+				return c.JSON(http.StatusUnauthorized, helper.ResponseToClient(http.StatusUnauthorized, "Unauthorized", nil))
+			}
+
+			return next(c)
 		}
 	}
 }

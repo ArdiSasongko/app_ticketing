@@ -10,10 +10,27 @@ type EventRequest struct {
 	Location    string            `validate:"required" json:"location"`
 	StartTime   helper.CustomTime `validate:"required" json:"start_time"`
 	EndTime     helper.CustomTime `validate:"required" json:"end_time"`
+	Tickets     []TicketRequest   `validate:"required" json:"tickets"`
+}
+
+type TicketRequest struct {
+	Category string  `validate:"required" json:"category"`
+	Price    float64 `validate:"required,gt=0" json:"price"`
+	Quantity int     `validate:"required,gte=0" json:"quantity"`
 }
 
 type EventUpdateRequest struct {
-	Location  string `json:"location"`
-	StartTime string `json:"start_time"`
-	EndTime   string `json:"end_time"`
+	Title       *string               `json:"title"`
+	Description *string               `json:"description"`
+	Location    *string               `json:"location"`
+	StartTime   *helper.CustomTime    `json:"start_time"`
+	EndTime     *helper.CustomTime    `json:"end_time"`
+	Tickets     []TicketUpdateRequest `json:"tickets"`
+}
+
+type TicketUpdateRequest struct {
+	TicketID int      `json:"ticket_id"`
+	Category *string  `json:"category"`
+	Price    *float64 `json:"price"`
+	Quantity *int     `json:"quantity"`
 }

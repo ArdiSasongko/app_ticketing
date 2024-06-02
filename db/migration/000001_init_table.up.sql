@@ -27,6 +27,7 @@ CREATE TABLE events (
 CREATE TABLE tickets (
     ticket_id SERIAL PRIMARY KEY,
     event_id INTEGER REFERENCES events(event_id),
+    category VARCHAR(50) CHECK (category IN ('regular', 'premium', 'vvip')) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     quantity INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
