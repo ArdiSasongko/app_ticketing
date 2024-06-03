@@ -71,3 +71,25 @@ func (r *EventRepo) UpdateTicket(ticketID int, updateTicket domain.Tickets) (*do
 
 	return &updateTicket, nil
 }
+
+// for deleting event
+func (r *EventRepo) DeleteEvent(eventID int) error {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		// delete related ticket
+		if err := tx.Where("event_id = ?", eventID).Delete(&domain.Tickets{}).Error; err != nil {
+			return err
+		}
+
+		// delete the event
+		if err := tx.Where("event_id = ?", eventID).Delete(&domain.Events{}).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+// for deleting ticket
+func (r *EventRepo) DeleteTicket(ticketID int) error {
+	return r.DB.Where("ticket_id = ?", ticketID).Delete(&domain.Tickets{}).Error
+}

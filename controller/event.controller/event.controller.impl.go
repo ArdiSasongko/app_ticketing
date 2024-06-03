@@ -21,6 +21,7 @@ func NewEventController(service eventservice.EventServiceInterface) *EventContro
 	}
 }
 
+// Create event
 func (con *EventController) Create(c echo.Context) error {
 	event := new(web.EventRequest)
 	user := c.Get("user").(*jwt.Token)
@@ -42,6 +43,7 @@ func (con *EventController) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, helper.ResponseToClient(http.StatusCreated, "Success create event", result))
 }
 
+// Fetch all event
 func (con *EventController) FetchAll(c echo.Context) error {
 	result, err := con.service.FetchAll()
 
@@ -52,6 +54,7 @@ func (con *EventController) FetchAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success fetch all event", result))
 }
 
+// fetch detail event
 func (con *EventController) FetchEvent(c echo.Context) error {
 	eventID, err := strconv.Atoi(c.Param("id"))
 
@@ -68,6 +71,7 @@ func (con *EventController) FetchEvent(c echo.Context) error {
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success fetch event", result))
 }
 
+// update event
 func (con *EventController) UpdateEvent(c echo.Context) error {
 	eventID, err := strconv.Atoi(c.Param("id"))
 
@@ -92,4 +96,38 @@ func (con *EventController) UpdateEvent(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success update event", result))
+}
+
+// delete event
+func (con *EventController) DeleteEvent(c echo.Context) error {
+	eventID, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	result, errDelete := con.service.DeleteEvent(eventID)
+
+	if errDelete != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, errDelete.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success delete event", result))
+}
+
+// delete ticket
+func (con *EventController) DeleteTicket(c echo.Context) error {
+	ticketID, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	result, errDelete := con.service.DeleteTicket(ticketID)
+
+	if errDelete != nil {
+		return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, errDelete.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success delete ticket", result))
 }

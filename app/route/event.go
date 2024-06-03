@@ -18,4 +18,6 @@ func EventRoute(e *echo.Echo, controller eventcontroller.EventControllerInterfac
 	apiv1.GET("/events", controller.FetchAll)
 	apiv1.GET("/event/:id", controller.FetchEvent)
 	apiv1.PUT("/event/:id", controller.UpdateEvent, middleware.JWTProtect(), middleware.AccessRole("seller"), middleware.AccessID(*event))
+	apiv1.DELETE("/event/:id", controller.DeleteEvent, middleware.JWTProtect(), middleware.AccessRole("seller"), middleware.AccessID(*event))
+	apiv1.DELETE("/ticket/:id", controller.DeleteTicket, middleware.JWTProtect(), middleware.AccessRole("seller"), middleware.AccessTicketID(*event))
 }

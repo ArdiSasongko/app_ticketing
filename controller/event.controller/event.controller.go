@@ -7,4 +7,6 @@ type EventControllerInterface interface {
 	FetchAll(c echo.Context) error
 	FetchEvent(c echo.Context) error
 	UpdateEvent(c echo.Context) error
+	DeleteEvent(c echo.Context) error
+	DeleteTicket(c echo.Context) error
 }

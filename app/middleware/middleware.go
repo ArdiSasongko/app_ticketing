@@ -62,3 +62,34 @@ func AccessID(r eventrepository.EventRepo) echo.MiddlewareFunc {
 		}
 	}
 }
+
+func AccessTicketID(r eventrepository.EventRepo) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			ticketID, err := strconv.Atoi(c.Param("id"))
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, helper.ResponseToClient(http.StatusBadRequest, err.Error(), nil))
+			}
+
+			ticket, err := r.FetchTicket(ticketID)
+			if err != nil {
+				return c.JSON(http.StatusNotFound, helper.ResponseToClient(http.StatusNotFound, err.Error(), nil))
+			}
+
+			event, err := r.FetchEvent(ticket.EventID)
+			if err != nil {
+				return c.JSON(http.StatusNotFound, helper.ResponseToClient(http.StatusNotFound, err.Error(), nil))
+			}
+
+			user := c.Get("user").(*jwt.Token)
+			claims, _ := user.Claims.(*helper.CustomClaims)
+			userID := claims.UserID
+
+			if userID != event.SellerID {
+				return c.JSON(http.StatusUnauthorized, helper.ResponseToClient(http.StatusUnauthorized, "Unauthorized", nil))
+			}
+
+			return next(c)
+		}
+	}
+}

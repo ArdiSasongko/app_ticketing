@@ -9,4 +9,6 @@ type EventRepoInterface interface {
 	UpdateEvent(eventID int, updateEvent domain.Events) (*domain.Events, error)
 	FetchTicket(ticketID int) (*domain.Tickets, error)
 	UpdateTicket(ticketID int, updateTicket domain.Tickets) (*domain.Tickets, error)
+	DeleteEvent(eventID int) error
+	DeleteTicket(ticketID int) error
 }

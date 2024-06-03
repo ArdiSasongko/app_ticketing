@@ -18,6 +18,7 @@ func NewEventService(repo eventrepository.EventRepoInterface) *EventService {
 	}
 }
 
+// Create is a function to create event
 func (s *EventService) Create(sellerID int, event web.EventRequest) (helper.CustomResponse, error) {
 	// convert web.EventRequest to domain.Event
 	eventReq := domain.Events{
@@ -53,6 +54,7 @@ func (s *EventService) Create(sellerID int, event web.EventRequest) (helper.Cust
 	return data, nil
 }
 
+// FetchAll is a function to fetch all event
 func (s *EventService) FetchAll() ([]entityevent.EventEntity, error) {
 	result, err := s.Repo.FetchAll()
 
@@ -63,6 +65,7 @@ func (s *EventService) FetchAll() ([]entityevent.EventEntity, error) {
 	return entityevent.ToEventEntityList(result), nil
 }
 
+// FetchEvent is a function to fetch event
 func (s *EventService) FetchEvent(eventId int) (entityevent.EventDetailEntity, error) {
 	result, err := s.Repo.FetchEvent(eventId)
 
@@ -73,6 +76,7 @@ func (s *EventService) FetchEvent(eventId int) (entityevent.EventDetailEntity, e
 	return entityevent.ToDetailTicket(*result), nil
 }
 
+// UpdateEvent is a function to update event
 func (s *EventService) UpdateEvent(eventID int, eventUpdate web.EventUpdateRequest) (helper.CustomResponse, error) {
 	// Fetch the existing event
 	event, err := s.Repo.FetchEvent(eventID)
@@ -130,6 +134,35 @@ func (s *EventService) UpdateEvent(eventID int, eventUpdate web.EventUpdateReque
 	// Prepare the response data
 	data := helper.CustomResponse{
 		"update": event,
+	}
+
+	return data, nil
+}
+
+// DeleteEvent is a function to delete event and the related tickets
+func (s *EventService) DeleteEvent(eventID int) (helper.CustomResponse, error) {
+	err := s.Repo.DeleteEvent(eventID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	data := helper.CustomResponse{
+		"message": "Event deleted successfully",
+	}
+	return data, nil
+}
+
+// DeleteTicket is a function to delete ticket
+func (s *EventService) DeleteTicket(ticketID int) (helper.CustomResponse, error) {
+	err := s.Repo.DeleteTicket(ticketID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	data := helper.CustomResponse{
+		"message": "Ticket deleted successfully",
 	}
 
 	return data, nil
