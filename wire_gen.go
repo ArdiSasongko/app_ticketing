@@ -9,13 +9,16 @@ package main
 import (
 	"github.com/ArdiSasongko/app_ticketing/app"
 	"github.com/ArdiSasongko/app_ticketing/controller/event.controller"
+	"github.com/ArdiSasongko/app_ticketing/controller/order.controller"
 	"github.com/ArdiSasongko/app_ticketing/controller/user.controller"
 	"github.com/ArdiSasongko/app_ticketing/db/conn"
 	"github.com/ArdiSasongko/app_ticketing/helper"
 	"github.com/ArdiSasongko/app_ticketing/repository/event.repository"
+	"github.com/ArdiSasongko/app_ticketing/repository/order.repository"
 	"github.com/ArdiSasongko/app_ticketing/repository/user.repository"
 	"github.com/ArdiSasongko/app_ticketing/repository/verification.repository"
 	"github.com/ArdiSasongko/app_ticketing/service/event.service"
+	"github.com/ArdiSasongko/app_ticketing/service/order.service"
 	"github.com/ArdiSasongko/app_ticketing/service/user.service"
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
@@ -33,7 +36,10 @@ func StartServer() *echo.Echo {
 	eventRepo := eventrepository.NewEventRepo(db)
 	eventService := eventservice.NewEventService(eventRepo)
 	eventController := eventcontroller.NewEventController(eventService)
-	echoEcho := app.Server(userController, eventController)
+	orderRepo := orderrepository.NewOrderRepo(db)
+	orderService := orderservice.NewOrderService(orderRepo)
+	orderController := ordercontroller.NewOrderController(orderService)
+	echoEcho := app.Server(userController, eventController, orderController)
 	return echoEcho
 }
 
@@ -42,3 +48,5 @@ func StartServer() *echo.Echo {
 var userSet = wire.NewSet(userrepository.NewUserRepo, wire.Bind(new(userrepository.UserRepositoryInterface), new(*userrepository.UserRepo)), verificationrepository.NewEmailVerification, wire.Bind(new(verificationrepository.VerificationEmailInterface), new(*verificationrepository.EmailVerification)), helper.NewTokenUseCase, wire.Bind(new(helper.TokenUseCaseInterface), new(*helper.TokenUseCaseImpl)), userservice.NewUserService, wire.Bind(new(userservice.UserServiceInterface), new(*userservice.UserService)), usercontroller.NewUserController, wire.Bind(new(usercontroller.UserControllerInterface), new(*usercontroller.UserController)))
 
 var eventSet = wire.NewSet(eventrepository.NewEventRepo, wire.Bind(new(eventrepository.EventRepoInterface), new(*eventrepository.EventRepo)), eventservice.NewEventService, wire.Bind(new(eventservice.EventServiceInterface), new(*eventservice.EventService)), eventcontroller.NewEventController, wire.Bind(new(eventcontroller.EventControllerInterface), new(*eventcontroller.EventController)))
+
+var orderSet = wire.NewSet(orderrepository.NewOrderRepo, wire.Bind(new(orderrepository.OrderRepositoryInterface), new(*orderrepository.OrderRepo)), orderservice.NewOrderService, wire.Bind(new(orderservice.OrderServiceInterface), new(*orderservice.OrderService)), ordercontroller.NewOrderController, wire.Bind(new(ordercontroller.OrderControllerInterface), new(*ordercontroller.OrderController)))

@@ -1,0 +1,2 @@
+ALTER TABLE orders
+ADD COLUMN event_id INTEGER NOT NULL;

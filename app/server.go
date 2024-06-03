@@ -5,6 +5,7 @@ import (
 
 	"github.com/ArdiSasongko/app_ticketing/app/route"
 	eventcontroller "github.com/ArdiSasongko/app_ticketing/controller/event.controller"
+	ordercontroller "github.com/ArdiSasongko/app_ticketing/controller/order.controller"
 	usercontroller "github.com/ArdiSasongko/app_ticketing/controller/user.controller"
 	"github.com/ArdiSasongko/app_ticketing/helper"
 	"github.com/go-playground/validator/v10"
@@ -23,9 +24,10 @@ func (cV *CustomValidator) Validate(i interface{}) error {
 // making alias
 type userCon usercontroller.UserControllerInterface
 type eventCon eventcontroller.EventControllerInterface
+type orderCon ordercontroller.OrderControllerInterface
 
 // server func declaration
-func Server(userController userCon, eventController eventCon) *echo.Echo {
+func Server(user userCon, event eventCon, order orderCon) *echo.Echo {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -34,7 +36,8 @@ func Server(userController userCon, eventController eventCon) *echo.Echo {
 	server.Validator = &CustomValidator{validator: validator.New()}
 	server.HTTPErrorHandler = helper.ValidateBind
 
-	route.UserRoute(server, userController)
-	route.EventRoute(server, eventController)
+	route.UserRoute(server, user)
+	route.EventRoute(server, event)
+	route.OrderRoute(server, order)
 	return server
 }
