@@ -167,3 +167,14 @@ func (s *EventService) DeleteTicket(ticketID int) (helper.CustomResponse, error)
 
 	return data, nil
 }
+
+// FetchEventBySellerID is a function to fetch event by seller ID
+func (s *EventService) FetchEventBySellerID(sellerID int) ([]entityevent.EventEntity, error) {
+	result, err := s.Repo.FetchEventBySellerID(sellerID)
+
+	if err != nil {
+		return []entityevent.EventEntity{}, err
+	}
+
+	return entityevent.ToEventEntityList(result), nil
+}

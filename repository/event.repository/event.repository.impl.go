@@ -93,3 +93,13 @@ func (r *EventRepo) DeleteEvent(eventID int) error {
 func (r *EventRepo) DeleteTicket(ticketID int) error {
 	return r.DB.Where("ticket_id = ?", ticketID).Delete(&domain.Tickets{}).Error
 }
+
+// for fetching event by seller id
+func (r *EventRepo) FetchEventBySellerID(sellerID int) ([]domain.Events, error) {
+	var events []domain.Events
+	if err := r.DB.Where("seller_id = ?", sellerID).Find(&events).Error; err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}

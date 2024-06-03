@@ -131,3 +131,18 @@ func (con *EventController) DeleteTicket(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success delete ticket", result))
 }
+
+// fetch event by seller id
+func (con *EventController) FetchEventBySellerID(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims, _ := user.Claims.(*helper.CustomClaims)
+	sellerID := claims.UserID
+
+	result, err := con.service.FetchEventBySellerID(sellerID)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, helper.ResponseToClient(http.StatusNotFound, err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Success fetch event by seller id", result))
+}

@@ -13,4 +13,5 @@ type EventServiceInterface interface {
 	UpdateEvent(eventID int, eventUpdate web.EventUpdateRequest) (helper.CustomResponse, error)
 	DeleteEvent(eventID int) (helper.CustomResponse, error)
 	DeleteTicket(ticketID int) (helper.CustomResponse, error)
+	FetchEventBySellerID(sellerID int) ([]entityevent.EventEntity, error)
 }

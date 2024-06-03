@@ -9,4 +9,5 @@ type EventControllerInterface interface {
 	UpdateEvent(c echo.Context) error
 	DeleteEvent(c echo.Context) error
 	DeleteTicket(c echo.Context) error
+	FetchEventBySellerID(c echo.Context) error
 }
