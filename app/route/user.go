@@ -14,5 +14,6 @@ func UserRoute(e *echo.Echo, controller usercontroller.UserControllerInterface) 
 	apiv1.POST("/user/verify-email", controller.VerifyEmail)
 	apiv1.POST("/user/login", controller.Login)
 	apiv1.POST("/user/logout", controller.Logout, middleware.JWTProtect())
-	apiv1.GET("/user/order", controller.GetOrder, middleware.JWTProtect())
+	apiv1.GET("/user/order", controller.GetOrder, middleware.JWTProtect(), middleware.AccessRole("buyer"))
+	apiv1.GET("/user/history", controller.GetHistory, middleware.JWTProtect(), middleware.AccessRole("buyer"))
 }

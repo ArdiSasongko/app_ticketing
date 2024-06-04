@@ -222,3 +222,13 @@ func (service *UserService) GetOrder(userID int) (entityuser.UserEntityOrder, er
 
 	return entityuser.ToUserEntityOrder(*result), nil
 }
+
+func (service *UserService) GetHistory(userID int) (entityuser.UserEntitHistory, error) {
+	result, err := service.repo.GetHistory(userID)
+
+	if err != nil {
+		return entityuser.UserEntitHistory{}, err
+	}
+
+	return entityuser.ToUserEntitHistory(*result), nil
+}

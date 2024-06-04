@@ -11,21 +11,30 @@ import (
 	historyrepository "github.com/ArdiSasongko/app_ticketing/repository/history.repository"
 	orderrepository "github.com/ArdiSasongko/app_ticketing/repository/order.repository"
 	paymentrepository "github.com/ArdiSasongko/app_ticketing/repository/payment.repository"
+	orderservice "github.com/ArdiSasongko/app_ticketing/service/order.service"
 )
 
 type PaymentService struct {
-	paymentRepo paymentrepository.PaymentRepoInterface
-	historyRepo historyrepository.HistoryRepoInterface
-	orderRepo   orderrepository.OrderRepositoryInterface
-	eventRepo   eventrepository.EventRepoInterface
+	paymentRepo  paymentrepository.PaymentRepoInterface
+	historyRepo  historyrepository.HistoryRepoInterface
+	orderRepo    orderrepository.OrderRepositoryInterface
+	eventRepo    eventrepository.EventRepoInterface
+	orderService orderservice.OrderServiceInterface
 }
 
-func NewPaymentService(paymentRepo paymentrepository.PaymentRepoInterface, historyRepo historyrepository.HistoryRepoInterface, orderRepo orderrepository.OrderRepositoryInterface, eventRepo eventrepository.EventRepoInterface) *PaymentService {
+func NewPaymentService(
+	paymentRepo paymentrepository.PaymentRepoInterface,
+	historyRepo historyrepository.HistoryRepoInterface,
+	orderRepo orderrepository.OrderRepositoryInterface,
+	eventRepo eventrepository.EventRepoInterface,
+	orderService orderservice.OrderServiceInterface,
+) *PaymentService {
 	return &PaymentService{
-		paymentRepo: paymentRepo,
-		historyRepo: historyRepo,
-		orderRepo:   orderRepo,
-		eventRepo:   eventRepo,
+		paymentRepo:  paymentRepo,
+		historyRepo:  historyRepo,
+		orderRepo:    orderRepo,
+		eventRepo:    eventRepo,
+		orderService: orderService,
 	}
 }
 
@@ -34,6 +43,13 @@ func (s *PaymentService) CreatePayment(payment web.PaymentRequest) (helper.Custo
 	order, err := s.orderRepo.GetOrderById(payment.OrderID)
 	if err != nil {
 		return nil, errors.New("order not found")
+	}
+
+	// check order status
+	statusOrder := s.orderService.CheckOrderStatus(payment.OrderID)
+
+	if statusOrder != nil {
+		return nil, statusOrder
 	}
 
 	// Check if amount is sufficient

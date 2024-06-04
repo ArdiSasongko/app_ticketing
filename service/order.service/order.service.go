@@ -8,4 +8,5 @@ import (
 type OrderServiceInterface interface {
 	Create(orderReq web.OrderRequest) (helper.CustomResponse, error)
 	CanceledOrder() error
+	CheckOrderStatus(orderId int) error
 }

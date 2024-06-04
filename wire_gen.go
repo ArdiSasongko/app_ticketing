@@ -43,7 +43,7 @@ func StartServer() *echo.Echo {
 	orderService := orderservice.NewOrderService(orderRepo, eventRepo)
 	paymentRepo := paymentrepository.NewPaymentRepository(db)
 	historyRepo := historyrepository.NewHistoryRepository(db)
-	paymentService := paymentservice.NewPaymentService(paymentRepo, historyRepo, orderRepo, eventRepo)
+	paymentService := paymentservice.NewPaymentService(paymentRepo, historyRepo, orderRepo, eventRepo, orderService)
 	orderController := ordercontroller.NewOrderController(orderService, paymentService)
 	cron := app.InitCron(orderService)
 	echoEcho := app.Server(userController, eventController, orderController, cron)

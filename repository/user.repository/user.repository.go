@@ -8,4 +8,5 @@ type UserRepositoryInterface interface {
 	FindByID(id int) (*domain.Users, error)
 	Update(user *domain.Users) error
 	GetOrders(userId int) (*domain.Users, error)
+	GetHistory(userId int) (*domain.Users, error)
 }

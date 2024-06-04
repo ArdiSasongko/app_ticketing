@@ -9,4 +9,5 @@ type UserControllerInterface interface {
 	Login(c echo.Context) error
 	Logout(c echo.Context) error
 	GetOrder(c echo.Context) error
+	GetHistory(c echo.Context) error
 }

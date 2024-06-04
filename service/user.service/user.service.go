@@ -13,4 +13,5 @@ type UserServiceInterface interface {
 	Logout(token string) (helper.CustomResponse, error)
 	VerifyEmail(token string) (helper.CustomResponse, error)
 	GetOrder(userID int) (entityuser.UserEntityOrder, error)
+	GetHistory(userID int) (entityuser.UserEntitHistory, error)
 }

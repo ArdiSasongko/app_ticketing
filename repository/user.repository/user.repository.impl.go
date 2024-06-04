@@ -62,3 +62,12 @@ func (repo *UserRepo) GetOrders(userId int) (*domain.Users, error) {
 	}
 	return &user, nil
 }
+
+func (repo *UserRepo) GetHistory(userId int) (*domain.Users, error) {
+	var user domain.Users
+	if err := repo.DB.Preload("History").First(&user, userId).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}

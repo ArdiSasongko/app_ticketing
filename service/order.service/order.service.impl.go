@@ -1,6 +1,7 @@
 package orderservice
 
 import (
+	"errors"
 	"time"
 
 	"github.com/ArdiSasongko/app_ticketing/db/model/domain"
@@ -61,4 +62,23 @@ func (s *OrderService) Create(orderReq web.OrderRequest) (helper.CustomResponse,
 func (s *OrderService) CanceledOrder() error {
 	currentTime := time.Now()
 	return s.repo.CanceledOrder(currentTime)
+}
+
+// check order status
+func (s *OrderService) CheckOrderStatus(orderId int) error {
+	order, errOrder := s.repo.GetOrderById(orderId)
+
+	if errOrder != nil {
+		return errOrder
+	}
+
+	if order.Status == "canceled" {
+		return errors.New("order has been canceled, please create new order")
+	}
+
+	if order.Status == "completed" {
+		return errors.New("order has been completed")
+	}
+
+	return nil
 }
