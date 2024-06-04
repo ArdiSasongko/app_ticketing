@@ -5,5 +5,5 @@ type OrderRequest struct {
 	TicketID   int     `json:"ticket_id"`
 	BuyerID    int     `json:"buyer_id"`
 	Quantity   int     `validate:"required,min=1" json:"quantity"`
-	TotalPrice float64 `validate:"required,min=0" json:"total_price"`
+	TotalPrice float64 `json:"total_price"`
 }

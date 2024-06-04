@@ -10,4 +10,5 @@ func OrderRoute(e *echo.Echo, controller ordercontroller.OrderControllerInterfac
 	apiv1 := e.Group("api/v1")
 
 	apiv1.POST("/event/:event_id/ticket/:ticket_id/order", controller.Create, middleware.JWTProtect(), middleware.AccessRole("buyer"))
+	apiv1.POST("/user/order/:order_id/payment", controller.PayOrder, middleware.JWTProtect(), middleware.AccessRole("buyer"))
 }

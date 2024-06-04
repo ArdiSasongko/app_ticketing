@@ -12,4 +12,5 @@ type EventRepoInterface interface {
 	DeleteEvent(eventID int) error
 	DeleteTicket(ticketID int) error
 	FetchEventBySellerID(sellerID int) ([]domain.Events, error)
+	DecreaseTicket(ticketID int, amount int) error
 }

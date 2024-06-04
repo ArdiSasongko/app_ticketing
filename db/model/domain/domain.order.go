@@ -10,7 +10,7 @@ type Orders struct {
 	Quantity   int       `gorm:"column:quantity"`
 	TotalPrice float64   `gorm:"column:total_price"`
 	Status     string    `gorm:"column:status"`
-	ExpiredAt  time.Time `gorm:"column:expired_at"`
+	ExpiredAt  time.Time `gorm:"column:expires_at"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

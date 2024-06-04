@@ -7,4 +7,5 @@ type UserRepositoryInterface interface {
 	FindByEmail(email string) (*domain.Users, error)
 	FindByID(id int) (*domain.Users, error)
 	Update(user *domain.Users) error
+	GetOrders(userId int) (*domain.Users, error)
 }

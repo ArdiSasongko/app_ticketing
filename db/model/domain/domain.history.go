@@ -9,3 +9,7 @@ type History struct {
 	Action    string `gorm:"column:action"`
 	CreatedAt time.Time
 }
+
+func (History) TableName() string {
+	return "history"
+}

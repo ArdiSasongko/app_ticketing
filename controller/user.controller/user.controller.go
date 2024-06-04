@@ -8,4 +8,5 @@ type UserControllerInterface interface {
 	VerifyEmail(c echo.Context) error
 	Login(c echo.Context) error
 	Logout(c echo.Context) error
+	GetOrder(c echo.Context) error
 }

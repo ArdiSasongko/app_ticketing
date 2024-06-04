@@ -11,11 +11,14 @@ import (
 	"github.com/ArdiSasongko/app_ticketing/db/conn"
 	"github.com/ArdiSasongko/app_ticketing/helper"
 	eventrepository "github.com/ArdiSasongko/app_ticketing/repository/event.repository"
+	historyrepository "github.com/ArdiSasongko/app_ticketing/repository/history.repository"
 	orderrepository "github.com/ArdiSasongko/app_ticketing/repository/order.repository"
+	paymentrepository "github.com/ArdiSasongko/app_ticketing/repository/payment.repository"
 	userrepository "github.com/ArdiSasongko/app_ticketing/repository/user.repository"
 	verificationrepository "github.com/ArdiSasongko/app_ticketing/repository/verification.repository"
 	eventservice "github.com/ArdiSasongko/app_ticketing/service/event.service"
 	orderservice "github.com/ArdiSasongko/app_ticketing/service/order.service"
+	paymentservice "github.com/ArdiSasongko/app_ticketing/service/payment.service"
 	userservice "github.com/ArdiSasongko/app_ticketing/service/user.service"
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
@@ -52,12 +55,27 @@ var orderSet = wire.NewSet(
 	wire.Bind(new(ordercontroller.OrderControllerInterface), new(*ordercontroller.OrderController)),
 )
 
+var paymentSet = wire.NewSet(
+	paymentrepository.NewPaymentRepository,
+	wire.Bind(new(paymentrepository.PaymentRepoInterface), new(*paymentrepository.PaymentRepo)),
+	paymentservice.NewPaymentService,
+	wire.Bind(new(paymentservice.PaymentServiceInterface), new(*paymentservice.PaymentService)),
+)
+
+var historySet = wire.NewSet(
+	historyrepository.NewHistoryRepository,
+	wire.Bind(new(historyrepository.HistoryRepoInterface), new(*historyrepository.HistoryRepo)),
+)
+
 func StartServer() *echo.Echo {
 	wire.Build(
 		conn.DBConn,
 		userSet,
 		eventSet,
 		orderSet,
+		paymentSet,
+		historySet,
+		app.InitCron,
 		app.Server,
 	)
 	return nil

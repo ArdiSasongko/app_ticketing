@@ -112,3 +112,17 @@ func (controller *UserController) Logout(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Logout success", result))
 }
+
+func (controller *UserController) GetOrder(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims, _ := user.Claims.(*helper.CustomClaims)
+	userID := claims.UserID
+
+	result, err := controller.service.GetOrder(userID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helper.ResponseToClient(http.StatusInternalServerError, err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helper.ResponseToClient(http.StatusOK, "Get order success", result))
+}

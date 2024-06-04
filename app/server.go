@@ -11,6 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/robfig/cron/v3"
 )
 
 type CustomValidator struct {
@@ -22,12 +23,17 @@ func (cV *CustomValidator) Validate(i interface{}) error {
 }
 
 // making alias
-type userCon usercontroller.UserControllerInterface
-type eventCon eventcontroller.EventControllerInterface
-type orderCon ordercontroller.OrderControllerInterface
+// type userCon usercontroller.UserControllerInterface
+// type eventCon eventcontroller.EventControllerInterface
+// type orderCon ordercontroller.OrderControllerInterface
 
 // server func declaration
-func Server(user userCon, event eventCon, order orderCon) *echo.Echo {
+func Server(
+	user usercontroller.UserControllerInterface,
+	event eventcontroller.EventControllerInterface,
+	order ordercontroller.OrderControllerInterface,
+	cronJob *cron.Cron,
+) *echo.Echo {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}

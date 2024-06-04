@@ -103,3 +103,8 @@ func (r *EventRepo) FetchEventBySellerID(sellerID int) ([]domain.Events, error) 
 
 	return events, nil
 }
+
+// for decreasing ticket stock
+func (r *EventRepo) DecreaseTicket(ticketID int, amount int) error {
+	return r.DB.Model(&domain.Tickets{}).Where("ticket_id = ?", ticketID).Update("quantity", amount).Error
+}

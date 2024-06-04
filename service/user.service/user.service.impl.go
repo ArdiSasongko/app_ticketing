@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/ArdiSasongko/app_ticketing/db/model/domain"
+	entityuser "github.com/ArdiSasongko/app_ticketing/db/model/entity/entity.user"
 	"github.com/ArdiSasongko/app_ticketing/db/model/web"
 	"github.com/ArdiSasongko/app_ticketing/helper"
 	userrepository "github.com/ArdiSasongko/app_ticketing/repository/user.repository"
@@ -210,4 +211,14 @@ func (service *UserService) Logout(token string) (helper.CustomResponse, error) 
 	}
 
 	return nil, nil
+}
+
+func (service *UserService) GetOrder(userID int) (entityuser.UserEntityOrder, error) {
+	result, err := service.repo.GetOrders(userID)
+
+	if err != nil {
+		return entityuser.UserEntityOrder{}, err
+	}
+
+	return entityuser.ToUserEntityOrder(*result), nil
 }

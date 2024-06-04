@@ -54,3 +54,11 @@ func (repo *UserRepo) Update(user *domain.Users) error {
 
 	return nil
 }
+
+func (repo *UserRepo) GetOrders(userId int) (*domain.Users, error) {
+	var user domain.Users
+	if err := repo.DB.Preload("Orders").First(&user, userId).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

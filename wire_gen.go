@@ -14,11 +14,14 @@ import (
 	"github.com/ArdiSasongko/app_ticketing/db/conn"
 	"github.com/ArdiSasongko/app_ticketing/helper"
 	"github.com/ArdiSasongko/app_ticketing/repository/event.repository"
+	"github.com/ArdiSasongko/app_ticketing/repository/history.repository"
 	"github.com/ArdiSasongko/app_ticketing/repository/order.repository"
+	"github.com/ArdiSasongko/app_ticketing/repository/payment.repository"
 	"github.com/ArdiSasongko/app_ticketing/repository/user.repository"
 	"github.com/ArdiSasongko/app_ticketing/repository/verification.repository"
 	"github.com/ArdiSasongko/app_ticketing/service/event.service"
 	"github.com/ArdiSasongko/app_ticketing/service/order.service"
+	"github.com/ArdiSasongko/app_ticketing/service/payment.service"
 	"github.com/ArdiSasongko/app_ticketing/service/user.service"
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
@@ -37,9 +40,13 @@ func StartServer() *echo.Echo {
 	eventService := eventservice.NewEventService(eventRepo)
 	eventController := eventcontroller.NewEventController(eventService)
 	orderRepo := orderrepository.NewOrderRepo(db)
-	orderService := orderservice.NewOrderService(orderRepo)
-	orderController := ordercontroller.NewOrderController(orderService)
-	echoEcho := app.Server(userController, eventController, orderController)
+	orderService := orderservice.NewOrderService(orderRepo, eventRepo)
+	paymentRepo := paymentrepository.NewPaymentRepository(db)
+	historyRepo := historyrepository.NewHistoryRepository(db)
+	paymentService := paymentservice.NewPaymentService(paymentRepo, historyRepo, orderRepo, eventRepo)
+	orderController := ordercontroller.NewOrderController(orderService, paymentService)
+	cron := app.InitCron(orderService)
+	echoEcho := app.Server(userController, eventController, orderController, cron)
 	return echoEcho
 }
 
@@ -50,3 +57,7 @@ var userSet = wire.NewSet(userrepository.NewUserRepo, wire.Bind(new(userreposito
 var eventSet = wire.NewSet(eventrepository.NewEventRepo, wire.Bind(new(eventrepository.EventRepoInterface), new(*eventrepository.EventRepo)), eventservice.NewEventService, wire.Bind(new(eventservice.EventServiceInterface), new(*eventservice.EventService)), eventcontroller.NewEventController, wire.Bind(new(eventcontroller.EventControllerInterface), new(*eventcontroller.EventController)))
 
 var orderSet = wire.NewSet(orderrepository.NewOrderRepo, wire.Bind(new(orderrepository.OrderRepositoryInterface), new(*orderrepository.OrderRepo)), orderservice.NewOrderService, wire.Bind(new(orderservice.OrderServiceInterface), new(*orderservice.OrderService)), ordercontroller.NewOrderController, wire.Bind(new(ordercontroller.OrderControllerInterface), new(*ordercontroller.OrderController)))
+
+var paymentSet = wire.NewSet(paymentrepository.NewPaymentRepository, wire.Bind(new(paymentrepository.PaymentRepoInterface), new(*paymentrepository.PaymentRepo)), paymentservice.NewPaymentService, wire.Bind(new(paymentservice.PaymentServiceInterface), new(*paymentservice.PaymentService)))
+
+var historySet = wire.NewSet(historyrepository.NewHistoryRepository, wire.Bind(new(historyrepository.HistoryRepoInterface), new(*historyrepository.HistoryRepo)))
